@@ -97,12 +97,12 @@
 
 - include: jboss_service.yml
 
-#### Defensive Programming To Check If EAP Is Already Installed
+#### Defensive Programming To Check If JBoss Datagrid Is Already Installed
 
 - name: Check Existence of Libraries
   become: true
   stat:
-    path: "{{ jboss_datagrid_library_dest + '/jboss-eap-6.4/version.txt'}}"
+    path: "{{ jboss_datagrid_library_dest + '/jboss-datagrid-6.6.0-server/version.txt'}}"
   register: jboss_datagrid_exists
   tags:
     - jboss_datagrid

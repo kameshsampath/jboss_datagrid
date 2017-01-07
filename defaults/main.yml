@@ -24,3 +24,10 @@ jboss_datagrid_base_version: 6.6.0
 
 # ussually this is set at the playbook level
 #transfer_method: # csp-to-host | copy-from-contoller
+
+# UDP Packet size setting
+jboss_datagrid_udp_recevie_packet_size: 26214400
+jboss_datagrid_udp_send_buffer_size: 1048576
+
+# TODO JBoss Logging 
+jboss_datagrid_jboss_logger: jboss
