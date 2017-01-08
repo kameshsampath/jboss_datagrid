@@ -5,47 +5,7 @@
 # https://access.redhat.com/documentation/en/red-hat-jboss-enterprise-application-platform/7.0.beta/installation-guide/chapter-4-configuring-jboss-Data Grid-to-run-as-a-service
 ##
 
-
-- name: Create JBoss Data Grid Group
-  group:
-    name: "{{ jboss_datagrid_group }}"
-    system: yes
-    state: present
-    gid: "400"
-  tags:
-    - jboss_datagrid
-
-- name: Create JBoss Data Grid User
-  user:
-    name: "{{ jboss_datagrid_user }}"
-    comment: "JBoss Data Grid User"
-    uid: "400"
-    group: "{{ jboss_datagrid_group }}"
-    home: "{{ jboss_datagrid_library_dest }}"
-    shell: "/bin/bash"
-  tags:
-    - jboss_datagrid
-
-- name: Create JBoss Data Grid Library Destination
-  become: true
-  file:
-    path: "{{ jboss_datagrid_library_dest }}"
-    owner: "{{ jboss_datagrid_user }}"
-    group: "{{ jboss_datagrid_group }}"
-    state: directory
-    mode: "755"
-  tags:
-    - jboss_datagrid
-
-- name: Create JBoss Data Grid Service Conf Directory
-  file:
-    path: "{{ jboss_datagrid_service_conf_dir }}"
-    owner: "{{ jboss_datagrid_user }}"
-    group: "{{ jboss_datagrid_group }}"
-    state: directory
-    mode: "755"
-  tags:
-    - jboss_datagrid
+- include: jboss_service_common.yml
 
 - name: Copy JBoss Data Grid Service Conf File
   template:

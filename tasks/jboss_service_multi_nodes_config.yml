@@ -11,8 +11,9 @@
   with_sequence: count="{{jboss_datagrid_nodes}}"
   notify:
     - Restart Jboss Datagrid Services
+    - Verify jboss datagrid nodes is running
   tags:
-    - jboss_datagrid
+    - jboss_datagrid_multi_nodes
 
 - name: Update the JBOSS_CONF file in jboss-as-standalone service file
   lineinfile: 
@@ -23,8 +24,9 @@
   with_sequence: count="{{jboss_datagrid_nodes}}"
   notify:
     - Restart Jboss Datagrid Services
+    - Verify jboss datagrid nodes is running
   tags:
-    - jboss_datagrid
+    - jboss_datagrid_multi_nodes
 
 - name: Update the JBOSS_SCRIPT jboss-as-standalone service file
   lineinfile: 
@@ -35,54 +37,55 @@
   with_sequence: count="{{jboss_datagrid_nodes}}"
   notify:
     - Restart Jboss Datagrid Services
+    - Verify jboss datagrid nodes is running
   tags:
-    - jboss_datagrid
+    - jboss_datagrid_multi_nodes
 
 - name: Update the Process Name jboss-as-standalone service file
   lineinfile: 
     dest: "/etc/init.d/{{ jboss_datagrid_service_file | regex_replace('.sh$','-node-'+item+'.sh') }}"
-    regexp: '^(# processname:)(.*)$'
+    regexp: '^(# processname:)( standalone)$'
     line: '\1 {{jboss_datagrid_service_file | regex_replace(".sh$","-node-"+item+".sh")}}'
     backrefs: yes
   with_sequence: count="{{jboss_datagrid_nodes}}"
   notify:
     - Restart Jboss Datagrid Services
+    - Verify jboss datagrid nodes is running
   tags:
-    - jboss_datagrid
+    - jboss_datagrid_multi_nodes
 
 - name: Update the Pid File jboss-as-standalone service file
   lineinfile: 
     dest: "/etc/init.d/{{ jboss_datagrid_service_file | regex_replace('.sh$','-node-'+item+'.sh') }}"
-    regexp: '^(# pidfile:)(.*)$'
+    regexp: '^(# pidfile:)( /var/run/jboss-as/jboss-as-standalone.pid)$'
     line: '\1 /var/run/jboss-as/jboss-as-standalone-node-{{item}}.pid'
     backrefs: yes
   with_sequence: count="{{jboss_datagrid_nodes}}"
   notify:
     - Restart Jboss Datagrid Services
+    - Verify jboss datagrid nodes is running
   tags:
-    - jboss_datagrid
+    - jboss_datagrid_multi_nodes
 
 - name: Update the Config File jboss-as-standalone service file
   lineinfile: 
     dest: "/etc/init.d/{{ jboss_datagrid_service_file | regex_replace('.sh$','-node-'+item+'.sh') }}"
-    regexp: '^(# config:)(.*)$'
+    regexp: '^(# config:)( /etc/jboss-as/jboss-as.conf)$'
     line: '\1 /etc/jboss-as/jboss-as-node-{{item}}.conf'
     backrefs: yes
   with_sequence: count="{{jboss_datagrid_nodes}}"
   notify:
     - Restart Jboss Datagrid Services
+    - Verify jboss datagrid nodes is running
   tags:
-    - jboss_datagrid
-
-## TODO 
-## JBOSS_SCRIPT=$JBOSS_HOME/bin/standalone.sh
+    - jboss_datagrid_multi_nodes
 
 - name: Add jboss datagrid Service
   become: true
   command: "chkconfig --add {{ jboss_datagrid_service_file | regex_replace('.sh$','-node-'+item+'.sh') }}"
   with_sequence: count="{{jboss_datagrid_nodes}}"
   tags:
-    - jboss_datagrid
+    - jboss_datagrid_multi_nodes
 
 - name: Enable jboss datagrid Service
   become: true
@@ -91,4 +94,4 @@
     enabled: yes
   with_sequence: count="{{jboss_datagrid_nodes}}"
   tags:
-    - jboss_datagrid
+    - jboss_datagrid_multi_nodes

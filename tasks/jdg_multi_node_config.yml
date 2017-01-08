@@ -5,14 +5,14 @@
     name: net.core.rmem_max
     value: "{{jboss_datagrid_udp_recevie_packet_size}}"
   tags:
-    - jboss-datagrid
+    - jboss_datagrid_multi_nodes
 
 - name: UDP send buffer for JGroups
   sysctl:
     name: net.core.wmem_max
     value: "{{jboss_datagrid_udp_send_buffer_size}}"
   tags:
-    - jboss-datagrid
+    - jboss_datagrid_multi_nodes
 
 # copy the clustered.xml configuration to {{jboss_datagrid_home}}/standalone/configuration
 - name: Copy clustered.xml configuration
@@ -23,7 +23,7 @@
     group: "{{ jboss_datagrid_group }}"
     mode: 0755
   tags:
-    - jboss-datagrid
+    - jboss_datagrid_multi_nodes
 
 # copy the standalone.conf {{jboss_datagrid_home}}/bin
 - name: Copy standalone.conf
@@ -36,7 +36,7 @@
   notify:
     - Restart Jboss Datagrid Services
   tags:
-    - jboss-datagrid
+    - jboss_datagrid_multi_nodes
 
 # create node directories
 - name: "Create JBoss Data Grid Node {{item}} base directory"
@@ -48,12 +48,12 @@
     mode: 0755
   with_sequence: count="{{jboss_datagrid_nodes}}"
   tags:
-    - jboss-datagrid
+    - jboss_datagrid_multi_nodes
 
 - debug: 
     msg: "Host: {{ansible_ssh_host}}"
 
-# Copy the configuration files from base image to the nodes
+# Copy the configuration files from base image to the nodes does change in dest dir will reverse sync?
 - name: "Create configuration on node {{ item }}"
   synchronize:
     src: "{{jboss_datagrid_home}}/standalone/configuration"
@@ -61,12 +61,14 @@
     recursive: yes
     owner: yes
     group: yes
+    rsync_opts:
+      - "--exclude=standalone_xml_history"
   delegate_to: "{{ ansible_ssh_host }}"  
   with_sequence: count="{{jboss_datagrid_nodes}}"
   notify:
     - Restart Jboss Datagrid Services
   tags:
-    - jboss-datagrid
+    - jboss_datagrid_multi_nodes
 
 - name: "Create deployments on node {{ item }}"
   synchronize:
@@ -78,7 +80,7 @@
   delegate_to: "{{ ansible_ssh_host }}"  
   with_sequence: count="{{jboss_datagrid_nodes}}"  
   tags:
-    - jboss-datagrid
+    - jboss_datagrid_multi_nodes
 
 - name: "Create lib on node {{ item }}"
   synchronize:
@@ -92,4 +94,4 @@
   notify:
     - Restart Jboss Datagrid Services
   tags:
-    - jboss-datagrid
+    - jboss_datagrid_multi_nodes

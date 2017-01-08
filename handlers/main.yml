@@ -12,16 +12,9 @@
   tags:
     - jboss_eap
 
-## TODO check in EL 6 
-- name: Restart Jboss Datagrid Services
-  become: true
-  service:
-    name: "{{ jboss_datagrid_service_name }}-node-{{item}}"
-    state: restarted
-  with_sequence: count="{{jboss_datagrid_nodes}}"
-  tags:
-    - jboss_eap
-
+- include: multi_node_handler.yml
+  when: jboss_datagrid_multi_node
+  
 # Sanity test if everything was setup right and JBoss is running
 - name: Verify jboss datagrid is running
   wait_for: port="11222" host="{{ jboss_datagrid_bind_web_address }}" timeout=120

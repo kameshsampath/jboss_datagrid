@@ -1,0 +1,42 @@
+---
+
+- name: Create JBoss Data Grid Group
+  group:
+    name: "{{ jboss_datagrid_group }}"
+    system: yes
+    state: present
+    gid: "400"
+  tags:
+    - jboss_datagrid_service_common
+
+- name: Create JBoss Data Grid User
+  user:
+    name: "{{ jboss_datagrid_user }}"
+    comment: "JBoss Data Grid User"
+    uid: "400"
+    group: "{{ jboss_datagrid_group }}"
+    home: "{{ jboss_datagrid_library_dest }}"
+    shell: "/bin/bash"
+  tags:
+    - boss_datagrid_service_common
+
+- name: Create JBoss Data Grid Library Destination
+  become: true
+  file:
+    path: "{{ jboss_datagrid_library_dest }}"
+    owner: "{{ jboss_datagrid_user }}"
+    group: "{{ jboss_datagrid_group }}"
+    state: directory
+    mode: "755"
+  tags:
+    - boss_datagrid_service_common
+
+- name: Create JBoss Data Grid Service Conf Directory
+  file:
+    path: "{{ jboss_datagrid_service_conf_dir }}"
+    owner: "{{ jboss_datagrid_user }}"
+    group: "{{ jboss_datagrid_group }}"
+    state: directory
+    mode: "755"
+  tags:
+    - boss_datagrid_service_common
