@@ -96,6 +96,10 @@
 #### Create Service Account
 
 - include: jboss_service.yml
+  when: not jboss_datagrid_multi_node
+
+- include: jboss_multi_service.yml
+  when: jboss_datagrid_multi_node
 
 #### Defensive Programming To Check If JBoss Datagrid Is Already Installed
 
@@ -151,39 +155,20 @@
     - jboss_datagrid
   when: jboss_datagrid_exists.stat.exists == false
 
-## Copy jboss-as-{{jboss_datagrid_mode}}.sh or jboss-eap-rhel.sh file to /etc/init.d
-- name: Copy JBoss EAP Service File
-  become: true
-  copy:
-    src: "{{jboss_datagrid_bin_dir}}/init.d/{{jboss_datagrid_service_file}}"
-    dest: /etc/init.d
-    remote_src: True
-    owner: "{{ jboss_datagrid_user }}"
-    group: "{{ jboss_datagrid_group }}"
-    mode: "755"
-  notify:
-    - Restart jboss datagrid Service
-    - Verify jboss datagrid is running
-  tags:
-    - jboss_datagrid
+- include: jboss_service_config.yml
+  when: not jboss_datagrid_multi_node  
 
-- name: Add jboss datagrid Service
-  become: true
-  command: "chkconfig --add {{jboss_datagrid_service_file}}"
-  tags:
-    - jboss_datagrid
-
-- name: Enable jboss datagrid Service
-  become: true
-  service:
-    name: "{{jboss_datagrid_service_file}}"
-    enabled: yes
-  tags:
-    - jboss_datagrid
+- include: jboss_service_multi_nodes_config.yml
+  when: jboss_datagrid_multi_node 
 
 #### Set Sensible Defaults For Runtime
 
 ## Configure JDG
 - include: jdg_config.yml
+  when: not jboss_datagrid_multi_node
+
+## Golden Image setup during multinode
+- include: jdg_multi_node_config.yml
+  when: jboss_datagrid_multi_node
 
 

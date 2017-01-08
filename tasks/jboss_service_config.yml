@@ -1,0 +1,29 @@
+## Copy jboss-as-{{jboss_datagrid_mode}}.sh or jboss-eap-rhel.sh file to /etc/init.d
+- name: Copy JBoss EAP Service File
+  become: true
+  copy:
+    src: "{{jboss_datagrid_bin_dir}}/init.d/{{jboss_datagrid_service_file}}"
+    dest: /etc/init.d
+    remote_src: True
+    owner: "{{ jboss_datagrid_user }}"
+    group: "{{ jboss_datagrid_group }}"
+    mode: "755"
+  notify:
+    - Restart jboss datagrid Service
+    - Verify jboss datagrid is running
+  tags:
+    - jboss_datagrid
+
+- name: Add jboss datagrid Service
+  become: true
+  command: "chkconfig --add {{jboss_datagrid_service_file}}"
+  tags:
+    - jboss_datagrid
+
+- name: Enable jboss datagrid Service
+  become: true
+  service:
+    name: "{{jboss_datagrid_service_file}}"
+    enabled: yes
+  tags:
+    - jboss_datagrid

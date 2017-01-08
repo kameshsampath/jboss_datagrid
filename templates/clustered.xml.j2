@@ -277,7 +277,7 @@
             </unbounded-queue-thread-pool>
         </subsystem>
         <subsystem xmlns="urn:jboss:domain:transactions:1.4">
-            <core-environment>
+            <core-environment node-identifier="${jboss.tx.node.id}">
                 <process-id>
                     <uuid/>
                 </process-id>
