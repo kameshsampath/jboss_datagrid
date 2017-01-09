@@ -50,21 +50,17 @@
   tags:
     - jboss_datagrid_multi_nodes
 
-- debug: 
-    msg: "Host: {{ansible_ssh_host}}"
-
 # Copy the configuration files from base image to the nodes does change in dest dir will reverse sync?
 - name: "Create configuration on node {{ item }}"
   synchronize:
     src: "{{jboss_datagrid_home}}/standalone/configuration"
     dest: "{{jboss_datagrid_library_dest}}/node-{{item}}"
     recursive: yes
-    owner: yes
-    group: yes
     rsync_opts:
       - "--exclude=standalone_xml_history"
   delegate_to: "{{ ansible_ssh_host }}"  
   with_sequence: count="{{jboss_datagrid_nodes}}"
+  when: jboss_datagrid_service_lib_created | changed
   notify:
     - Restart Jboss Datagrid Services
   tags:
@@ -75,10 +71,9 @@
     src: "{{jboss_datagrid_home}}/standalone/deployments"
     dest: "{{jboss_datagrid_library_dest}}/node-{{item}}"
     recursive: yes
-    owner: yes
-    group: yes
   delegate_to: "{{ ansible_ssh_host }}"  
-  with_sequence: count="{{jboss_datagrid_nodes}}"  
+  with_sequence: count="{{jboss_datagrid_nodes}}"
+  when: jboss_datagrid_service_lib_created | changed
   tags:
     - jboss_datagrid_multi_nodes
 
@@ -87,10 +82,9 @@
     src: "{{jboss_datagrid_home}}/standalone/lib"
     dest: "{{jboss_datagrid_library_dest}}/node-{{item}}"
     recursive: yes
-    owner: yes
-    group: yes
   delegate_to: "{{ ansible_ssh_host }}"  
   with_sequence: count="{{jboss_datagrid_nodes}}"
+  when: jboss_datagrid_service_lib_created | changed
   notify:
     - Restart Jboss Datagrid Services
   tags:

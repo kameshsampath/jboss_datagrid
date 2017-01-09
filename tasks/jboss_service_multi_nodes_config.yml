@@ -9,6 +9,7 @@
     group: "{{ jboss_datagrid_group }}"
     mode: "755"
   with_sequence: count="{{jboss_datagrid_nodes}}"
+  when: jboss_datagrid_service_lib_created | changed
   notify:
     - Restart Jboss Datagrid Services
     - Verify jboss datagrid nodes is running

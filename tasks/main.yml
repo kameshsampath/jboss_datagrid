@@ -151,6 +151,7 @@
     copy: no
     owner: "{{ jboss_datagrid_user }}"
     group: "{{ jboss_datagrid_group }}"
+  register: jboss_datagrid_service_lib_created
   tags:
     - jboss_datagrid
   when: jboss_datagrid_exists.stat.exists == false
